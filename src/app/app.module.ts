@@ -10,6 +10,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { BaseComponent } from './base/base.component';
 import { HttpClientModule } from '@angular/common/http';
+import { DeleteDirective } from './directives/admin/delete.directive';
+import { DeleteDialogComponent } from './dialogs/delete-dialog/delete-dialog.component';
 
 declare var $: any
 
@@ -20,7 +22,7 @@ declare var $: any
   imports: [
     BrowserModule,
     AppRoutingModule,
-    AdminModule,UiModule, 
+    AdminModule,UiModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     NgxSpinnerModule,

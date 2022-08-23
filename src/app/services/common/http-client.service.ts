@@ -1,75 +1,65 @@
 import { Inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpClientService {
-
   constructor(private httpClient: HttpClient, @Inject("baseUrl") private baseUrl: string) { }
 
-  private Url(request: RequestParameters) : string {
-
-    return `${request.baseUrl ? request.baseUrl : this.baseUrl}/${request.controller}${request.action ? '/${request.action}' : ""}` ; 
+  private url(requestParameter: Partial<RequestParameters>): string {
+    return `${requestParameter.baseUrl ? requestParameter.baseUrl : this.baseUrl}/${requestParameter.controller}${requestParameter.action ? `/${requestParameter.action}` : ""}`;
   }
 
-  Get<T>(request: Partial<RequestParameters>, id?: string) :  Observable<T> {
-    let url : string = "";
-
-    if(request.fullEndPoint)
-      url = request.fullEndPoint;
+  get<T>(requestParameter: Partial<RequestParameters>, id?: string): Observable<T> {
+    let url: string = "";
+    if (requestParameter.fullEndPoint)
+      url = requestParameter.fullEndPoint;
     else
-      url = `${this.Url(request)}${id ? '/${id}' : ''}` //If we use GetById, It added to url
-
-    return this.httpClient.get<T>(url, {headers: request.header});
+      url = `${this.url(requestParameter)}${id ? `/${id}` : ""}${requestParameter.queryString ? `?${requestParameter.queryString}` : ""}`;
+    debugger;
+    return this.httpClient.get<T>(url, { headers: requestParameter.headers });
   }
 
-  Post<T>(request: Partial<RequestParameters>, body: Partial<T> ) : Observable<T> {
-    let url : string = "";
-
-    if(request.fullEndPoint)
-      url = request.fullEndPoint;
+  post<T>(requestParameter: Partial<RequestParameters>, body: Partial<T>): Observable<T> {
+    let url: string = "";
+    if (requestParameter.fullEndPoint)
+      url = requestParameter.fullEndPoint;
     else
-      url = `${this.Url(request)}`;
+      url = `${this.url(requestParameter)}${requestParameter.queryString ? `?${requestParameter.queryString}` : ""}`
 
-    
-    return this.httpClient.post<T>(url, body, {headers: request.header});
+    return this.httpClient.post<T>(url, body, { headers: requestParameter.headers });
   }
 
-  Put<T>(request: Partial<RequestParameters>, body: Partial<T>) : Observable<T> {
-    let url : string = "";
-
-    if(request.fullEndPoint)
-      url = request.fullEndPoint;
+  put<T>(requestParameter: Partial<RequestParameters>, body: Partial<T>): Observable<T> {
+    let url: string = "";
+    if (requestParameter.fullEndPoint)
+      url = requestParameter.fullEndPoint;
     else
-      url = `${this.Url(request)}`;
+      url = `${this.url(requestParameter)}${requestParameter.queryString ? `?${requestParameter.queryString}` : ""}`;
 
-    return this.httpClient.put<T>(url, body, {headers : request.header});
+    return this.httpClient.put<T>(url, body, { headers: requestParameter.headers });
   }
 
-  Delete<T>(request: Partial<RequestParameters>, id: string) : Observable<T> {
-    let url : string = "";
-
-    if(request.fullEndPoint)
-      url = request.fullEndPoint;
+  delete<T>(requestParameter: Partial<RequestParameters>, id: string): Observable<T> {
+    let url: string = "";
+    if (requestParameter.fullEndPoint)
+      url = requestParameter.fullEndPoint;
     else
-      url = `${this.Url(request)}/${id}`;
+      url = `${this.url(requestParameter)}/${id}${requestParameter.queryString ? `?${requestParameter.queryString}` : ""}`;
 
-    return this.httpClient.delete<T>(url, {headers: request.header});
-
+    return this.httpClient.delete<T>(url, { headers: requestParameter.headers });
   }
 }
 
 
-
-
 export class RequestParameters {
-  controller? : string;
-  action?: string; // May have action or not
+  controller?: string;
+  action?: string;
+  queryString?: string;
 
-  header?: HttpHeaders; //Request may has header
-  baseUrl?: string; //Base Url may has changed
-
-  fullEndPoint?: string; //We can make a request to other endpoints 
+  headers?: HttpHeaders;
+  baseUrl?: string;
+  fullEndPoint?: string;
 }
